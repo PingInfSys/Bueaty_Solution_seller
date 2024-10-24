@@ -32,16 +32,20 @@ class HomeCubit extends Cubit<HomeState> {
   final ibanController = TextEditingController();
   final bankNameController = TextEditingController();
   //OfficialWorkingHours from time and to time ist 5 days from sunday to thursday
-  final officialWorkingHoursFromTimeControllerList = List.generate(5, (index) => TextEditingController());
-  final officialWorkingHoursToTimeControllerList = List.generate(5, (index) => TextEditingController());
+  final officialWorkingHoursFromTimeControllerList =
+      List.generate(5, (index) => TextEditingController());
+  final officialWorkingHoursToTimeControllerList =
+      List.generate(5, (index) => TextEditingController());
 
   // all days
   final officialWorkingHoursFromTimeAllDyesController = TextEditingController();
   final officialWorkingHoursToTimeAllDyesController = TextEditingController();
 
   //Working hours on official holidays
-  final workingHoursOnOfficialHolidaysFromTimeController = TextEditingController();
-  final workingHoursOnOfficialHolidaysToTimeController = TextEditingController();
+  final workingHoursOnOfficialHolidaysFromTimeController =
+      TextEditingController();
+  final workingHoursOnOfficialHolidaysToTimeController =
+      TextEditingController();
   //*مواعيد العمل في الأعياد و المناسبات
   final workingHoursOnHolidaysFromTimeController = TextEditingController();
   final workingHoursOnHolidaysToTimeController = TextEditingController();
@@ -65,9 +69,16 @@ class HomeCubit extends Cubit<HomeState> {
   final GlobalKey<FormState> sellerDtaFormKey = GlobalKey<FormState>();
   final FilesPickerService _filesPickerService = FilesPickerService();
   List<WorkingTimes> workingTimes = [];
-
+//*اعادةتحميل التطبيق علي حالته الاولي
   void restartApp(BuildContext context) {
     Phoenix.rebirth(context);
+  }
+
+  void restartAppWithDelay(BuildContext context) {
+    Future.delayed(const Duration(seconds: 2), () {
+      // ignore: use_build_context_synchronously
+      restartApp(context);
+    });
   }
 
   //* toggle between salon and beauty station
@@ -84,7 +95,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   //* pick licenseImage  file
   Future<void> pickLicenseImage() async {
-    final file = await _filesPickerService.pickFile(allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'], type: FileType.custom);
+    final file = await _filesPickerService.pickFile(
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+        type: FileType.custom);
     if (file != null) {
       emit(state.copyWith(licenseImage: file.path));
     }
@@ -92,7 +105,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   //* pick previousWorkFiles
   Future<void> pickPreviousWorkFiles() async {
-    final files = await _filesPickerService.pickMultipleFiles(allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'], type: FileType.custom);
+    final files = await _filesPickerService.pickMultipleFiles(
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+        type: FileType.custom);
     if (files.isNotEmpty) {
       emit(state.copyWith(previousWorkFiles: files));
     }
@@ -108,7 +123,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   //* pick profileFiles
   Future<void> pickProfileFiles() async {
-    final files = await _filesPickerService.pickMultipleFiles(allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'], type: FileType.custom);
+    final files = await _filesPickerService.pickMultipleFiles(
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+        type: FileType.custom);
     if (files.isNotEmpty) {
       emit(state.copyWith(profileFiles: files));
     }
@@ -116,7 +133,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   //* pick manusAndPricingFiles only excel file
   Future<void> pickManusAndPricingFile() async {
-    final file = await _filesPickerService.pickFile(allowedExtensions: ['xlsx', 'pdf', 'xls'], type: FileType.custom);
+    final file = await _filesPickerService.pickFile(
+        allowedExtensions: ['xlsx', 'pdf', 'xls'], type: FileType.custom);
     if (file != null) {
       emit(state.copyWith(manusAndPricingFile: file.path));
     }
@@ -132,7 +150,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   setAllDays(bool bool) {
     if (bool) {
-      for (var i = 0; i < officialWorkingHoursFromTimeControllerList.length; i++) {
+      for (var i = 0;
+          i < officialWorkingHoursFromTimeControllerList.length;
+          i++) {
         officialWorkingHoursFromTimeControllerList[i].clear();
         officialWorkingHoursToTimeControllerList[i].clear();
       }
@@ -150,18 +170,24 @@ class HomeCubit extends Cubit<HomeState> {
   bool addSelectedDays(BuildContext context) {
     workingTimes = [];
 
-    if (workingHoursOnOfficialHolidaysFromTimeController.text.isEmpty || workingHoursOnOfficialHolidaysToTimeController.text.isEmpty) {
-      UIGlobal.showCustomTost(context, title: 'من فضلك ادخل مواعيد العمل في الأجازات الرسمية');
+    if (workingHoursOnOfficialHolidaysFromTimeController.text.isEmpty ||
+        workingHoursOnOfficialHolidaysToTimeController.text.isEmpty) {
+      UIGlobal.showCustomTost(context,
+          title: 'من فضلك ادخل مواعيد العمل في الأجازات الرسمية');
       return false;
     }
-    if (workingHoursOnHolidaysFromTimeController.text.isEmpty || workingHoursOnHolidaysToTimeController.text.isEmpty) {
-      UIGlobal.showCustomTost(context, title: 'من فضلك ادخل مواعيد العمل في الأعياد و المناسبات');
+    if (workingHoursOnHolidaysFromTimeController.text.isEmpty ||
+        workingHoursOnHolidaysToTimeController.text.isEmpty) {
+      UIGlobal.showCustomTost(context,
+          title: 'من فضلك ادخل مواعيد العمل في الأعياد و المناسبات');
       return false;
     }
 
     if (state.allDays) {
-      if (officialWorkingHoursFromTimeAllDyesController.text.isEmpty || officialWorkingHoursToTimeAllDyesController.text.isEmpty) {
-        UIGlobal.showCustomTost(context, title: 'من فضلك ادخل مواعيد العمل في كل الأيام');
+      if (officialWorkingHoursFromTimeAllDyesController.text.isEmpty ||
+          officialWorkingHoursToTimeAllDyesController.text.isEmpty) {
+        UIGlobal.showCustomTost(context,
+            title: 'من فضلك ادخل مواعيد العمل في كل الأيام');
         return false;
       } else {
         for (int i = 0; i < 5; i++) {
@@ -181,7 +207,8 @@ class HomeCubit extends Cubit<HomeState> {
         if (fromTime.isEmpty && toTime.isEmpty) {
           continue;
         } else if (fromTime.isEmpty || toTime.isEmpty) {
-          UIGlobal.showCustomTost(context, title: 'من فضلك ادخل مواعيد العمل في الأيام الرسمية بشكل صحيح');
+          UIGlobal.showCustomTost(context,
+              title: 'من فضلك ادخل مواعيد العمل في الأيام الرسمية بشكل صحيح');
           return false;
         } else {
           workingTimes.add(WorkingTimes(
@@ -195,7 +222,8 @@ class HomeCubit extends Cubit<HomeState> {
       if (workingTimes.isNotEmpty) {
         return true;
       } else {
-        UIGlobal.showCustomTost(context, title: 'من فضلك ادخل مواعيد العمل في الأيام الرسمية بشكل صحيح');
+        UIGlobal.showCustomTost(context,
+            title: 'من فضلك ادخل مواعيد العمل في الأيام الرسمية بشكل صحيح');
         return false;
       }
     }
@@ -229,7 +257,9 @@ class HomeCubit extends Cubit<HomeState> {
             // 'website': websiteController.text,
             'email': emailController.text,
             // 'socialMediaAccounts': socialAccountLinkController.text,
-            "contractPrecentage": contractPercentageController.text.isNotEmpty ? double.tryParse(contractPercentageController.text) : 0.0,
+            "contractPrecentage": contractPercentageController.text.isNotEmpty
+                ? double.tryParse(contractPercentageController.text)
+                : 0.0,
             "isAgreeToContract": state.acceptSigningContract,
             "IsMail": state.sendViaEmail,
 
@@ -254,10 +284,11 @@ class HomeCubit extends Cubit<HomeState> {
       if (response.status == ApiStatus.success) {
         emit(state.copyWith(status: ApiStatus.success));
         UIGlobal.showCustomTost(context, title: response.message);
-
-        restartApp(context);
+        Future.delayed(
+            const Duration(seconds: 2), () => restartApp(context));
       } else {
-        emit(state.copyWith(status: ApiStatus.error, errorMessage: response.message));
+        emit(state.copyWith(
+            status: ApiStatus.error, errorMessage: response.message));
         UIGlobal.showCustomTost(context, title: response.message);
       }
     } catch (e) {
@@ -298,7 +329,9 @@ class HomeCubit extends Cubit<HomeState> {
             // 'website': websiteController.text,
             'email': emailController.text,
             // 'socialMediaAccounts': socialAccountLinkController.text,
-            "contractPrecentage": contractPercentageController.text.isNotEmpty ? double.tryParse(contractPercentageController.text) : 0.0,
+            "contractPrecentage": contractPercentageController.text.isNotEmpty
+                ? double.tryParse(contractPercentageController.text)
+                : 0.0,
             "isAgreeToContract": state.acceptSigningContract,
             "IsMail": state.sendViaEmail,
 
@@ -325,9 +358,10 @@ class HomeCubit extends Cubit<HomeState> {
       if (response.status == ApiStatus.success) {
         emit(state.copyWith(status: ApiStatus.success));
         UIGlobal.showCustomTost(context, title: response.message);
-        restartApp(context);
+        Future.delayed(const Duration(seconds: 2), () => restartApp(context));
       } else {
-        emit(state.copyWith(status: ApiStatus.error, errorMessage: response.message));
+        emit(state.copyWith(
+            status: ApiStatus.error, errorMessage: response.message));
         UIGlobal.showCustomTost(context, title: response.message);
       }
     } catch (e) {
