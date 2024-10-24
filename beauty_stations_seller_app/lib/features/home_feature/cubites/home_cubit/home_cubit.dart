@@ -10,7 +10,7 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import '../../../../resource/enums_manager.dart';
 import 'home_state.dart';
 
@@ -65,6 +65,10 @@ class HomeCubit extends Cubit<HomeState> {
   final GlobalKey<FormState> sellerDtaFormKey = GlobalKey<FormState>();
   final FilesPickerService _filesPickerService = FilesPickerService();
   List<WorkingTimes> workingTimes = [];
+
+  void restartApp(BuildContext context) {
+    Phoenix.rebirth(context);
+  }
 
   //* toggle between salon and beauty station
   void toggleSalon() {
@@ -250,6 +254,8 @@ class HomeCubit extends Cubit<HomeState> {
       if (response.status == ApiStatus.success) {
         emit(state.copyWith(status: ApiStatus.success));
         UIGlobal.showCustomTost(context, title: response.message);
+
+        restartApp(context);
       } else {
         emit(state.copyWith(status: ApiStatus.error, errorMessage: response.message));
         UIGlobal.showCustomTost(context, title: response.message);
@@ -319,6 +325,7 @@ class HomeCubit extends Cubit<HomeState> {
       if (response.status == ApiStatus.success) {
         emit(state.copyWith(status: ApiStatus.success));
         UIGlobal.showCustomTost(context, title: response.message);
+        restartApp(context);
       } else {
         emit(state.copyWith(status: ApiStatus.error, errorMessage: response.message));
         UIGlobal.showCustomTost(context, title: response.message);
